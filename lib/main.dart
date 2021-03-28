@@ -1,7 +1,9 @@
 import 'package:e_book/screens/BookDetail.dart';
 import 'package:e_book/screens/Discover.dart';
 import 'package:e_book/screens/Library.dart';
+import 'package:e_book/viewModels/CommentsViewModel.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(Home());
@@ -18,31 +20,34 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: _widgets.elementAt(_currentIndex),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) => {
-            this.setState(() {
-              _currentIndex = index;
-            })
-          },
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: 'Discover',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book),
-              label: 'Library',
-            ),
-          ],
+    return ChangeNotifierProvider(
+      create: (context) => CommentsViewModels(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: _widgets.elementAt(_currentIndex),
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) => {
+              this.setState(() {
+                _currentIndex = index;
+              })
+            },
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.search),
+                label: 'Discover',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.menu_book),
+                label: 'Library',
+              ),
+            ],
+          ),
         ),
       ),
     );

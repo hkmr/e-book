@@ -1,18 +1,20 @@
 import 'package:e_book/components/AddCommentBox.dart';
 import 'package:e_book/components/CommentCard.dart';
 import 'package:e_book/config/constants.dart';
+import 'package:e_book/model/Comment.dart';
+import 'package:e_book/screens/Reviews.dart';
 import 'package:e_book/screens/Summary.dart';
+import 'package:e_book/viewModels/CommentsViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-class BookDetail extends StatefulWidget {
-  @override
-  _BookDetailState createState() => _BookDetailState();
-}
-
-class _BookDetailState extends State<BookDetail> {
+class BookDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    List<Comment> comments =
+        Provider.of<CommentsViewModels>(context).getComments();
+
     return Scaffold(
       backgroundColor: Color.fromRGBO(244, 244, 244, 1),
       body: SafeArea(
@@ -20,9 +22,9 @@ class _BookDetailState extends State<BookDetail> {
           children: [
             _header(),
             SizedBox(height: kSpacingL),
-            _bookMenu(),
+            _bookMenu(context),
             SizedBox(height: kSpacingM),
-            _commentList(),
+            _commentList(comments),
             AddCommentBox(),
           ],
         ),
@@ -103,37 +105,46 @@ class _BookDetailState extends State<BookDetail> {
     );
   }
 
-  Widget _bookMenu() {
+  Widget _bookMenu(BuildContext context) {
     return Container(
       color: Colors.white,
-      margin: EdgeInsets.symmetric(horizontal: kSpacingM),
       padding: EdgeInsets.all(kPaddingS),
+      margin: EdgeInsets.symmetric(horizontal: kSpacingM),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           TextButton(
-              child: Text('Summary'),
-              onPressed: () => Navigator.push(
-                  context, new MaterialPageRoute(builder: (_) => Summary()))),
-          TextButton(onPressed: null, child: Text('Episodes')),
-          TextButton(onPressed: null, child: Text('Reviews')),
+            child: Text('Summary'),
+            onPressed: () => Navigator.push(
+                context, new MaterialPageRoute(builder: (_) => Summary())),
+          ),
+          TextButton(
+            child: Text('Episodes'),
+            onPressed: () => print('Episodes'),
+          ),
+          TextButton(
+            child: Text('Reviews'),
+            onPressed: () => Navigator.push(
+                context, new MaterialPageRoute(builder: (_) => Reviews())),
+          ),
         ],
       ),
     );
   }
 
-  Widget _commentList() {
-    return ListView(
+  Widget _commentList(List<Comment> comments) {
+    return ListView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.symmetric(horizontal: kPaddingM),
       physics: ClampingScrollPhysics(),
-      children: [
-        CommentCard(),
-        CommentCard(),
-        CommentCard(),
-        CommentCard(),
-        CommentCard(),
-      ],
+      itemCount: comments.length,
+      itemBuilder: (context, index) {
+        return CommentCard(
+          author: comments[index].authorName,
+          text: comments[index].text,
+          time: comments[index].time,
+        );
+      },
     );
   }
 }
